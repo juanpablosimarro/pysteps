@@ -123,7 +123,7 @@ def plot_geography(map, proj4str, extent, shape=None, lw=0.5, drawlonlatlines=Fa
         bm_params["urcrnrlat"]  = ur_lat
         bm_params["resolution"] = basemap_resolution
 
-        ax = plot_map_basemap(bm_params, drawlonlatlines=drawlonlatlines, lw=lw)
+        ax = plot_map_basemap(bm_params, rivercolor=None, mapboundarycolor=None, drawlonlatlines=drawlonlatlines, lw=lw)
 
         if basemap_scale_args is not None:
             ax.drawmapscale(*basemap_scale_args, fontsize=6, yoffset=10000)
