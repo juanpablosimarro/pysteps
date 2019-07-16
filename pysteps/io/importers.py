@@ -126,6 +126,118 @@ except ImportError:
     pyproj_imported = False
 
 
+def import_crri_eu(filename, **kwargs):
+    """Import a NetCDF radar rainfall product from the CRRI SAF.
+
+    Parameters
+    ----------
+    filename : str
+        Name of the file to import.
+
+    Returns
+    -------
+    out : tuple
+        A three-element tuple containing the rainfall field in mm/h imported
+        from the CRRI SAF netcdf, the quality field and the metadata. The
+        quality field is currently set to None.
+
+    """
+    if not netcdf4_imported:
+        raise MissingOptionalDependency(
+            "netCDF4 package is required to import CRRI SAF products "
+            "but it is not installed"
+        )
+
+    R = _import_crri_eu_data(filename)
+
+    geodata = _import_crri_eu_geodata(filename)
+    metadata = geodata
+    # TODO(import_crri_eu): Add missing georeferencing data.
+
+    metadata["transform"] = None
+    metadata["zerovalue"] = np.nanmin(R)
+    if np.any(np.isfinite(R)):
+        metadata["threshold"] = np.nanmin(R[R > np.nanmin(R)])
+    else:
+        metadata["threshold"] = np.nan
+
+    # cut a window, to be defined here and olny here
+    if True:
+        ny, nx = R.shape
+        nx1 = 440; nx2 = nx - 440
+        ny1 = 250; ny2 = ny
+        R = R[ny1:ny2, nx1:nx2]
+        x1, x2, xpixelsize = metadata['x1'], metadata['x2'], metadata['xpixelsize']
+        x1n = x1 + xpixelsize * nx1
+        x2n = x1 + xpixelsize * (nx2 - 1)
+        metadata['x1'], metadata['x2'] = x1n, x2n
+        y1, y2, ypixelsize = metadata['y1'], metadata['y2'], metadata['ypixelsize']
+        y1n = y2 - ypixelsize * (ny2 - 1)
+        y2n = y2 - ypixelsize * ny1
+        metadata['y1'], metadata['y2'] = y1n, y2n
+
+    return R, None, metadata
+
+
+def _import_crri_eu_data(filename):
+    ds_rainfall = netCDF4.Dataset(filename)
+    if "crr_intensity" in ds_rainfall.variables.keys():
+        data = np.array(ds_rainfall.variables["crr_intensity"])
+        precipitation = np.where(data == 65535, np.nan, data)
+    else:
+        precipitation = None
+    ds_rainfall.close()
+
+    return precipitation
+
+
+def _import_crri_eu_geodata(filename):
+
+    # nx = ds_rainfall.dimensions['nx'].size
+    # ny = ds_rainfall.dimensions['ny'].size
+    # valid_time = ds_rainfall.getncattr('nominal_product_time')
+
+    geodata = {}
+
+    ds_rainfall = netCDF4.Dataset(filename)
+
+    # get projection
+    projdef = ds_rainfall.getncattr('gdal_projection')
+    geodata["projection"] = projdef
+
+    # get x1, y1, x2, y2, xpixelsize, ypixelsize, yorigin
+    px = ds_rainfall.variables['nx'][:]
+    py = ds_rainfall.variables['ny'][:]
+    geotable = ds_rainfall.getncattr('gdal_geotransform_table')
+    xmin = px.min()
+    xmax = px.max()
+    ymin = py.min()
+    ymax = py.max()
+    xpixelsize = abs(geotable[1])
+    ypixelsize = abs(geotable[5])
+    factor_scale = 1.0
+    geodata["x1"] = xmin * factor_scale
+    geodata["y1"] = ymin * factor_scale
+    geodata["x2"] = xmax * factor_scale
+    geodata["y2"] = ymax * factor_scale
+    geodata["xpixelsize"] = xpixelsize * factor_scale
+    geodata["ypixelsize"] = ypixelsize * factor_scale
+    geodata["yorigin"] = "upper"
+
+    # get the accumulation period
+    geodata["accutime"] = None
+
+    # get the unit of precipitation
+    geodata["unit"] = ds_rainfall.variables['crr_intensity'].units
+
+    # get institution
+    geodata["institution"] = "SAF AEMET"
+
+    ds_rainfall.close()
+
+    return geodata
+
+
 def import_bom_rf3(filename, **kwargs):
     """Import a NetCDF radar rainfall product from the BoM Rainfields3.
 
