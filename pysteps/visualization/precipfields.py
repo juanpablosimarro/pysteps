@@ -194,8 +194,9 @@ def plot_precip_field(R, type="intensity", map=None, geodata=None, units='mm/h',
         axes.xaxis.set_ticklabels([])
         axes.yaxis.set_ticks([])
         axes.yaxis.set_ticklabels([])
-
-    return plt.gca()
+        return plt.gca()
+    else:
+        return ax
 
 def _plot_field(R, ax, type, units, colorscale, extent, origin=None):
     R = R.copy()

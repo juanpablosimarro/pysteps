@@ -68,6 +68,7 @@ def proj4_to_basemap(proj4str):
     """
     pdict = parse_proj4_string(proj4str)
     odict = {}
+    a = b = None
 
     for k,v in list(pdict.items()):
         if k == "proj":
@@ -89,6 +90,13 @@ def proj4_to_basemap(proj4str):
             odict["rsphere"] = float(v)
         elif k in ["k", "k0"]:
             odict["k_0"] = float(v)
+        elif k == "a":
+            a = float(v)
+        elif k == "b":
+            b = float(v)
+
+    if a is not None and b is not None:
+        odict["rsphere"] = (a, b)
 
     return odict
 
@@ -166,6 +174,8 @@ def proj4_to_cartopy(proj4str):
                 cl = ccrs.AlbersEqualArea
             elif v == "somerc":
                 raise UnsupportedSomercProjection("unsupported projection: somerc")
+            elif v == "geos":
+                cl = ccrs.Geostationary
             else:
                 raise ValueError("unsupported projection: %s" % v)
         elif k in km_proj:
