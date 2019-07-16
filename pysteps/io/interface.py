@@ -15,6 +15,7 @@ Interface for the io module.
 from pysteps.io import importers, exporters
 
 _importer_methods = dict()
+_importer_methods['crri_eu'] = importers.import_crri_eu
 _importer_methods['bom_rf3'] = importers.import_bom_rf3
 _importer_methods['fmi_geotiff'] = importers.import_fmi_geotiff
 _importer_methods['fmi_pgm'] = importers.import_fmi_pgm
@@ -45,6 +46,9 @@ def get_method(name, method_type):
         +--------------+-------------------------------------------------------+
         |     Name     |              Description                              |
         +==============+=======================================================+
+        | crri_eu      |  NetCDF SAF CRRI files                                |
+        |              |  containing convective rain rate intensity and other  |
+        +--------------+-------------------------------------------------------+
         | bom_rf3      |  NefCDF files used in the Boreau of Meterorology      |
         |              |  archive containing precipitation intensity           |
         |              |  composites.                                          |
