@@ -13,8 +13,19 @@
         "colorscale": "pysteps"
     },
     "data_sources": {
+        "crri": {
+            "root_path": "/home/laptop/software/PYSTEPS/pysteps-data-master/saf",
+            "path_fmt": "%Y%m%d/CRR",
+            "fn_pattern": "S_NWC_CRR_MSG4_Europe-VISIR_%Y%m%dT%H%M00Z",
+            "fn_ext": "nc",
+            "importer": "crri_eu",
+            "timestep": 15,
+            "importer_kwargs": {
+                "gzipped": true
+            }
+        },
         "bom": {
-            "root_path": "./radar/bom",
+            "root_path": "/home/laptop/software/PYSTEPS/pysteps-data-master/radar/bom",
             "path_fmt": "prcp-cscn/2/%Y/%m/%d",
             "fn_pattern": "2_%Y%m%d_%H%M00.prcp-cscn",
             "fn_ext": "nc",
@@ -25,7 +36,7 @@
             }
         },
         "fmi": {
-            "root_path": "./radar/fmi",
+            "root_path": "/home/laptop/software/PYSTEPS/pysteps-data-master/radar/fmi",
             "path_fmt": "%Y%m%d",
             "fn_pattern": "%Y%m%d%H%M_fmi.radar.composite.lowest_FIN_SUOMI1",
             "fn_ext": "pgm.gz",
@@ -36,7 +47,7 @@
             }
         },
         "mch": {
-            "root_path": "./radar/mch",
+            "root_path": "/home/laptop/software/PYSTEPS/pysteps-data-master/radar/mch",
             "path_fmt": "%Y%m%d",
             "fn_pattern": "AQC%y%j%H%M?_00005.801",
             "fn_ext": "gif",
@@ -49,7 +60,7 @@
             }
         },
         "opera": {
-            "root_path": "./radar/OPERA",
+            "root_path": "/home/laptop/software/PYSTEPS/pysteps-data-master/radar/OPERA",
             "path_fmt": "%Y%m%d",
             "fn_pattern": "T_PAAH21_C_EUOC_%Y%m%d%H%M%S",
             "fn_ext": "hdf",
@@ -58,7 +69,7 @@
             "importer_kwargs": {}
         },
         "knmi": {
-            "root_path": "./radar/KNMI",
+            "root_path": "/home/laptop/software/PYSTEPS/pysteps-data-master/radar/KNMI",
             "path_fmt": "%Y/%m",
             "fn_pattern": "RAD_NL25_RAP_5min_%Y%m%d%H%M",
             "fn_ext": "h5",
