@@ -124,7 +124,7 @@ V3 = oflow_method(R)  # needs longer training sequence
 
 # Plot the motion field
 ax = plot_precip_field(R_, geodata=metadata, title="DARTS", map=map_method)
-quiver(V2, geodata=metadata, step=25, ax=ax)
+quiver(V3, geodata=metadata, step=25, ax=ax)
 plt.savefig('plot_optical_flow_DARTS.pdf')
 
 # sphinx_gallery_thumbnail_number = 1
